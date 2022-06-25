@@ -225,17 +225,17 @@ instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map)
     Defaultable fMap fDefault <*> Defaultable xMap xDefault =
         Defaultable fxMap fxDefault
       where
-        fxMap = mconcat ((fMap <.> xMap) : fFallback <> xFallback)
+        fxMap = (fMap <.> xMap) <> fFallback <> xFallback
           where
             fFallback =
                 case fDefault of
-                    Nothing -> [ ]
-                    Just f  -> [ fmap f xMap ]
+                    Nothing -> mempty
+                    Just f  -> fmap f xMap
 
             xFallback =
                 case xDefault of
-                    Nothing -> [ ]
-                    Just x  -> [ fmap ($ x) fMap ]
+                    Nothing -> mempty
+                    Just x  -> fmap ($ x) fMap
 
         fxDefault = fDefault <*> xDefault
 
