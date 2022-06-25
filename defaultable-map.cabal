@@ -33,6 +33,7 @@ source-repository head
 
 library
     exposed-modules:  Defaultable.Map
+                    , Defaultable.Map.Generalized
     build-depends:    base >= 4.14.3.0 && < 5
                     , containers < 0.7
                     , deepseq >= 1.4.0.0 && < 1.5

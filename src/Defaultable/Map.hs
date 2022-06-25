@@ -14,10 +14,10 @@
 --  The `Defaultable` type constructor can be used to wrap any `Map`-like, such
 --  as @"Data.Map".`Data.Map.Map`@ or @"Data.HashMap".`Data.HashMap.HashMap`@.
 --
---  For convenience, this module also includes a sample API wrapping
---  @"Data.Map".`Data.Map.Map`@ since that's the most common case.  You can
---  also refer to this sample API to figure out how to wrap other `Map`-like
---  types.
+--  For convenience, this module also includes a concrete API wrapping
+--  @"Data.Map".`Data.Map.Map`@ since that's the most common case.  If you
+--  are interested in a more general API that works with other `Map` types then
+--  check out the "Defaultable.Map.Generalized" module.
 --
 --  The `Applicative` instance enables the use of the @ApplicativeDo@ language
 --  extension.  For example, suppose that you created the following three
@@ -193,8 +193,7 @@ import qualified Data.Map as Map
     You can query a `Defaultable` value using:
 
     * `lookup`
-    * Pattern matching on the `Defaultable` constructor to extract the
-      underlying @Map@-like type and default value
+    * `toMap` / `toDefault`
 -}
 data Defaultable map value =
     Defaultable
@@ -251,40 +250,21 @@ instance (Apply map, forall a . Monoid (map a), Monoid value) => Monoid (Default
 
 {-| Create a `Defaultable` `Map` from a `Map`
 
-    You can think of this function as having the following more specialized
-    type:
-
-@
-`fromMap` :: `Map` key value -> `Defaultable` (`Map` key) value
-@
-
-@
-`fromMap` m = `Defaultable` m `Nothing`
-@
-
 >>> fromMap (Map.fromList [('A',1),('B',2)])
 Defaultable (fromList [('A',1),('B',2)]) Nothing
 -}
-fromMap :: map value -> Defaultable map value
+fromMap :: Map key value -> Defaultable (Map key) value
 fromMap map_ = Defaultable map_ empty
 
 {-| Create a `Defaultable` `Map` from a single key-value pair
 
-@
-`singleton` key value = `fromMap` (`Map.singleton` key value)
-@
-
->>> singleton 'A' 1
+>>> singleton ('A', 1)
 Defaultable (fromList [('A',1)]) Nothing
 -}
-singleton :: key -> value -> Defaultable (Map key) value
-singleton key value = fromMap (Map.singleton key value)
+singleton :: (key, value) -> Defaultable (Map key) value
+singleton (key, value) = fromMap (Map.singleton key value)
 
 {-| Create a `Defaultable` `Map` from a list of key-value pairs
-
-@
-`fromList` pairs = `fromMap` (`Map.fromList` pairs)
-@
 
 >>> fromList [('A',1),('B',2)]
 Defaultable (fromList [('A',1),('B',2)]) Nothing
@@ -294,13 +274,8 @@ fromList pairs = fromMap (Map.fromList pairs)
 
 {-| Insert a key-value pair into a `Defaultable` `Map`
 
-@
--- The real implementation is more efficient
-`insert` key value map = `singleton` key value `<|>` map
-@
-
 >>> let example = fromList [('A', 1)]
->>> insert 'B' 2 example
+>>> insert ('B', 2) example
 Defaultable (fromList [('A',1),('B',2)]) Nothing
 
     For bulk updates, you should instead use `fromList`/`fromMap` with (`<|>`):
@@ -310,29 +285,16 @@ Defaultable (fromList [('A',1),('B',2),('C',3)]) Nothing
 -}
 insert
     :: Ord key
-    => key
-    -> value
+    => (key, value)
+    -- ^
     -> Defaultable (Map key) value
+    -- ^
     -> Defaultable (Map key) value
-insert key value (Defaultable map_ default_) =
+insert (key, value) (Defaultable map_ default_) =
     (Defaultable (Map.insert key value map_) default_)
 
 {-| Add a default value to a `Defaultable` `Map` that is returned as a fallback
     if a `lookup` cannot find a matching key
-
-    You can think of this function as having the following more specialized
-    type:
-
-@
-`withDefault`
-    :: `Ord` key
-    => `Defaultable` (`Map` key) value -> value -> `Defaultable` (`Map` key) value
-@
-
-@
--- The real implementation is more efficient
-defaultable \``withDefault`\` def = defaultable `<|>` `pure` def
-@
 
 >>> let example = fromList [('A',1)] `withDefault` 2
 >>> lookup 'A' example
@@ -340,7 +302,9 @@ Just 1
 >>> lookup 'B' example
 Just 2
 -}
-withDefault :: Defaultable map value -> value -> Defaultable map value
+withDefault
+    :: Ord key
+    => Defaultable (Map key) value -> value -> Defaultable (Map key) value
 Defaultable map_ _ `withDefault` default_ = Defaultable map_ (Just default_)
 
 {-| Lookup the value at a key in the map
@@ -377,26 +341,10 @@ Just 2
 lookup :: Ord key => key -> Defaultable (Map key) value -> Maybe value
 lookup key (Defaultable map_ default_) = Map.lookup key map_ <|> default_
 
-{-| Extract the underlying map from a `Defaultable` map
-
-    You can think of this function as having the following more specialized
-    type:
-
-@
-`toMap` :: `Defaultable` (`Map` key) value -> `Map` key value
-@
--}
-toMap :: Defaultable map value -> map value
+-- | Extract the underlying map from a `Defaultable` map
+toMap :: Defaultable (Map key) value -> Map key value
 toMap (Defaultable map_ _) = map_
 
-{-| Extract the default value from a `Defaultable` map
-
-    You can think of this function as having the following more specialized
-    type:
-
-@
-`toDefault` :: `Defaultable` (`Map` key) value -> `Maybe` value
-@
--}
-toDefault :: Defaultable map value -> Maybe value
+-- | Extract the default value from a `Defaultable` map
+toDefault :: Defaultable (Map key) value -> Maybe value
 toDefault (Defaultable _ default_) = default_
