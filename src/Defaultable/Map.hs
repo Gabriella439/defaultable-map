@@ -107,6 +107,7 @@ module Defaultable.Map
 
       -- * Type
       Defaultable(..)
+    , Map
 
       -- * Construction
     , fromMap
