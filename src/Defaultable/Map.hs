@@ -170,8 +170,9 @@ import qualified Data.Map as Map
 
     * @value@ The type of each value stored in the @Map@-like type
 
-    For example, you will typically have a type like:
-    @`Defaultable` (`Map` key) value@.
+    For example, you will typically have a type like
+    @`Defaultable` (`Map` key) value@ or
+    @`Defaultable` `Data.IntMap.IntMap` value@.
 
     You can build a `Defaultable` value using:
 
