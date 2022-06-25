@@ -51,6 +51,9 @@
 --     return (firstName, lastName, handles)
 -- @
 --
+-- >>> innerJoins
+-- Defaultable (fromList [(0,("Gabriella","Gonzalez","GabriellaG439"))]) Nothing
+--
 --  The `Alternative` instance for `Defaultable` is also important, too, because
 --  you can use `Alternative` operations to create \"left/right joins\" and
 --  something similar to an outer join, like this:
@@ -128,8 +131,10 @@ import qualified Data.Map as Map
 
 -- $comparison
 --
--- This package is similar to the <https://hackage.haskell.org/package/total-map total-map package>, which also provides an
--- \"`Applicative` `Map`\" type.  However, there are a couple of differences.
+-- This package is similar to the
+-- <https://hackage.haskell.org/package/total-map total-map package>,
+-- which also provides an \"`Applicative` `Map`\" type.  However, there are a
+-- couple of differences.
 --
 -- The first difference is that this package does not require you to supply a
 -- default value in order to get a valid `Applicative` instance.  In other
