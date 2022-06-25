@@ -125,6 +125,7 @@ module Defaultable.Map
 import Control.Applicative (liftA2, Alternative(..))
 import Control.DeepSeq (NFData)
 import Data.Data (Data)
+import Data.Functor.Alt (Alt(..))
 import Data.Functor.Apply (Apply(..))
 import Data.Map (Map)
 import GHC.Generics (Generic, Generic1)
@@ -215,6 +216,9 @@ data Defaultable map value =
         )
     deriving anyclass (NFData)
 
+instance (Apply map, forall a . Monoid (map a)) => Apply (Defaultable map) where
+    (<.>) = (<*>)
+
 instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map) where
     pure v = Defaultable mempty (Just v)
 
@@ -234,6 +238,9 @@ instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map)
                     Just x  -> [ fmap ($ x) fMap ]
 
         fxDefault = fDefault <*> xDefault
+
+instance (Apply map, forall a . Monoid (map a)) => Alt (Defaultable map) where
+    (<!>) = (<|>)
 
 instance (Apply map, forall a . Monoid (map a)) => Alternative (Defaultable map) where
     empty = Defaultable mempty empty
