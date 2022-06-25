@@ -117,6 +117,8 @@ module Defaultable.Map
 
       -- * Query
     , lookup
+    , toMap
+    , toDefault
     ) where
 
 import Control.Applicative (liftA2, Alternative(..))
@@ -374,3 +376,27 @@ Just 2
 -}
 lookup :: Ord key => key -> Defaultable (Map key) value -> Maybe value
 lookup key (Defaultable map_ default_) = Map.lookup key map_ <|> default_
+
+{-| Extract the underlying map from a `Defaultable` map
+
+    You can think of this function as having the following more specialized
+    type:
+
+@
+`toMap` :: `Defaultable` (`Map` key) value -> `Map` key value
+@
+-}
+toMap :: Defaultable map value -> map value
+toMap (Defaultable map_ _) = map_
+
+{-| Extract the default value from a `Defaultable` map
+
+    You can think of this function as having the following more specialized
+    type:
+
+@
+`toDefault` :: `Defaultable` (`Map` key) value -> `Maybe` value
+@
+-}
+toDefault :: Defaultable map value -> Maybe value
+toDefault (Defaultable _ default_) = default_
