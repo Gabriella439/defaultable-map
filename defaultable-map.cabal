@@ -1,0 +1,42 @@
+cabal-version:      3.0
+name:               defaultable-map
+version:            1.0.0
+synopsis:           Applicative maps
+description:        This package provides a @Defaultable@ type constructor that
+                    wraps any @Map@-like type to add an optional default value. 
+                    Wrapping a @Map@-like type in this way permits a valid
+                    @Applicative@ instance, so you can think of this as an
+                    "@Applicative@ map" package.  This package also provides a
+                    concrete wrapper around the @Map@ type from the @containers@
+                    package.
+                    .
+                    Strictly speaking, this package is not limited to just
+                    @Map@-like types.  The @Defaultable@ type can wrap any data
+                    structure that implements @Apply@ and @Monoid@.
+                    .
+                    This package is similar to the @total-map@ package, but the
+                    difference is that the @Defaultable@ type provided by this
+                    package does not require a default value to be present,
+                    which means that the @Defaultable@ type also has a valid
+                    @Alternative@ instance, unlike the @TotalMap@ type.
+
+bug-reports:        https://github.com/Gabriella439/applicative-map/issues
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Gabriella Gonzalez
+copyright:          2022 Gabriella Gonzalez
+maintainer:         GenuineGabby@gmail.com
+
+source-repository head
+    type:             git
+    location:         https://github.com/Gabriella439/applicative-map
+
+library
+    exposed-modules:  Defaultable.Map
+    build-depends:    base >= 4.14.3.0 && < 5
+                    , containers < 0.7
+                    , deepseq >= 1.4.0.0 && < 1.5
+                    , semigroupoids < 5.4
+    hs-source-dirs:   src
+    default-language: Haskell2010
+    ghc-options:      -Wall
