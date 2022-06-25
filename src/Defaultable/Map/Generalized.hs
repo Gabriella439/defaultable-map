@@ -63,7 +63,9 @@ insert item defaultable = defaultable <|> singleton item
 withDefault
     :: (Apply map, forall a . Monoid (map a))
     => Defaultable map value
+    -- ^
     -> value
+    -- ^
     -> Defaultable map value
 defaultable `withDefault` default_ = defaultable <|> pure default_
 

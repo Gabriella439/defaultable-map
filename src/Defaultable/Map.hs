@@ -304,7 +304,11 @@ Just 2
 -}
 withDefault
     :: Ord key
-    => Defaultable (Map key) value -> value -> Defaultable (Map key) value
+    => Defaultable (Map key) value
+    -- ^
+    -> value
+    -- ^
+    -> Defaultable (Map key) value
 Defaultable map_ _ `withDefault` default_ = Defaultable map_ (Just default_)
 
 {-| Lookup the value at a key in the map
