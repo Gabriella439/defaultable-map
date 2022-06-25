@@ -248,6 +248,13 @@ instance (Apply map, forall a . Monoid (map a), Monoid value) => Monoid (Default
 
 {-| Create a `Defaultable` `Map` from a `Map`
 
+    You can think of this function as having the following more specialized
+    type:
+
+@
+`fromMap` :: `Map` key value -> `Defaultable` (`Map` key) value
+@
+
 @
 `fromMap` m = `Defaultable` m `Nothing`
 @
@@ -255,7 +262,7 @@ instance (Apply map, forall a . Monoid (map a), Monoid value) => Monoid (Default
 >>> fromMap (Map.fromList [('A',1),('B',2)])
 Defaultable (fromList [('A',1),('B',2)]) Nothing
 -}
-fromMap :: Map key value -> Defaultable (Map key) value
+fromMap :: map value -> Defaultable map value
 fromMap map_ = Defaultable map_ empty
 
 {-| Create a `Defaultable` `Map` from a single key-value pair
@@ -310,7 +317,17 @@ insert key value (Defaultable map_ default_) =
 {-| Add a default value to a `Defaultable` `Map` that is returned as a fallback
     if a `lookup` cannot find a matching key
 
+    You can think of this function as having the following more specialized
+    type:
+
 @
+`withDefault`
+    :: `Ord` key
+    => `Defaultable` (`Map` key) value -> value -> `Defaultable` (`Map` key) value
+@
+
+@
+-- The real implementation is more efficient
 defaultable \``withDefault`\` def = defaultable `<|>` `pure` def
 @
 
@@ -320,10 +337,8 @@ Just 1
 >>> lookup 'B' example
 Just 2
 -}
-withDefault
-    :: Ord key
-    => Defaultable (Map key) value -> value -> Defaultable (Map key) value
-defaultable `withDefault` default_ = defaultable <|> pure default_
+withDefault :: Defaultable map value -> value -> Defaultable map value
+Defaultable map_ _ `withDefault` default_ = Defaultable map_ (Just default_)
 
 {-| Lookup the value at a key in the map
 
