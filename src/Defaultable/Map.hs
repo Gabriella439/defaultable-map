@@ -208,8 +208,8 @@ Given:
 • kf :: (a -> b) -> c
 • kx :: a -> c
 
-  `fmap` kf mf `<>` `fmap` kx mx `<>` (mf `<.>` mx)
-= `fmap` kx mx `<>` `fmap` kf mf `<>` (mf `<.>` mx)
+  (mf `<.>` mx) `<>` `fmap` kf mf `<>` `fmap` kx mx
+= (mf `<.>` mx) `<>` `fmap` kx mx `<>` `fmap` kf mf
 @
 
     … where `map` is the first type parameter that implements `Apply` and
@@ -268,7 +268,7 @@ instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map)
     Defaultable fMap fDefault <*> Defaultable xMap xDefault =
         Defaultable fxMap fxDefault
       where
-        fxMap = fFallback <> xFallback <> (fMap <.> xMap)
+        fxMap = (fMap <.> xMap) <> fFallback <> xFallback
           where
             fFallback =
                 case fDefault of
