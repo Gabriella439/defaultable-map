@@ -188,7 +188,7 @@ import qualified Data.Map as Map
     You can transform and combine `Defaultable` values using:
 
     * (`<|>`) - Concatenate two `Defaultable` values, preferring keys and
-      defaults from the right one
+      defaults from the left one
     * @do@ notation, if you enable @ApplicativeDo@
     * `withDefault` - To extend a `Defaultable` value with a default value
 
@@ -301,8 +301,8 @@ instance (Apply map, forall a . Monoid (map a), Monoid value) => Monoid (Default
 
 {-| Create a `Defaultable` `Map` from a `Map`
 
->>> fromMap (Map.fromList [('A',1),('B',2)])
-Defaultable (fromList [('A',1),('B',2)]) Nothing
+>>> fromMap (Map.fromList [('A',1),('B',2),('B',3)])
+Defaultable (fromList [('A',1),('B',3)]) Nothing
 -}
 fromMap :: Map key value -> Defaultable (Map key) value
 fromMap map_ = Defaultable map_ empty
@@ -317,8 +317,8 @@ singleton (key, value) = fromMap (Map.singleton key value)
 
 {-| Create a `Defaultable` `Map` from a list of key-value pairs
 
->>> fromList [('A',1),('B',2)]
-Defaultable (fromList [('A',1),('B',2)]) Nothing
+>>> fromList [('A',1),('B',2),('B',3)]
+Defaultable (fromList [('A',1),('B',3)]) Nothing
 -}
 fromList :: Ord key => [(key, value)] -> Defaultable (Map key) value
 fromList pairs = fromMap (Map.fromList pairs)
@@ -328,11 +328,13 @@ fromList pairs = fromMap (Map.fromList pairs)
 >>> let example = fromList [('A', 1)]
 >>> insert ('B', 2) example
 Defaultable (fromList [('A',1),('B',2)]) Nothing
+>>> insert ('A', 0) example
+Defaultable (fromList [('A',0)]) Nothing
 
     For bulk updates, you should instead use `fromList`/`fromMap` with (`<|>`):
 
->>> fromList [('B', 2), ('C', 3)] <|> example
-Defaultable (fromList [('A',1),('B',2),('C',3)]) Nothing
+>>> fromList [('A',0),('B', 2), ('C', 3)] <|> example
+Defaultable (fromList [('A',0),('B',2),('C',3)]) Nothing
 -}
 insert
     :: Ord key
