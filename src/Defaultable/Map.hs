@@ -205,12 +205,15 @@ Given:
 
 • mf :: map (a -> b)
 • mx :: map a
-• f :: a -> b
-• x :: a
+• kf :: (a -> b) -> c
+• kx :: a -> c
 
-  `fmap`  f    mx `<>` `fmap` (`$` x) mf `<>` (mf `<.>` mx)
-= `fmap` ($ x) mf `<>` `fmap`  f    mx `<>` (mf `<.>` mx)
+  `fmap` kf mf `<>` `fmap` kx mx `<>` (mf `<.>` mx)
+= `fmap` kx mx `<>` `fmap` kf mf `<>` (mf `<.>` mx)
 @
+
+    … where `map` is the first type parameter that implements `Apply` and
+    `Monoid`.
 
     The intuition here is if that @map@ is a `Map`-like type then we can think
     of those three expressions as having a set of keys associated with them,
@@ -219,7 +222,7 @@ Given:
 @
 Given:
 
-• keys :: map a -> `Set` key
+• keys :: map a -> `Data.Set.Set` key
 
 keys (mf `<.>` mx) = keys (`fmap` f mx) \`intersection\` keys (`fmap` (`$` x) mf)
 @
@@ -227,8 +230,8 @@ keys (mf `<.>` mx) = keys (`fmap` f mx) \`intersection\` keys (`fmap` (`$` x) mf
     So normally the following equality would not be true:
 
 @
-  `fmap`  f    mx `<>` `fmap` (`$` x) mf
-= `fmap` ($ x) mf `<>` `fmap`  f    mx
+  `fmap` kf mf `<>` `fmap` kx mx
+= `fmap` kx mx `<>` `fmap` kf mf
 @
 
     … because the result would change if there was a key collision.  Then the
