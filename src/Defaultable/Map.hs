@@ -196,6 +196,46 @@ import qualified Data.Map as Map
 
     * `lookup`
     * `toMap` / `toDefault`
+
+    Note that the `Applicative` instance for this type is only valid for
+    @map@ type constructors that satisfy the following extra law:
+
+@
+Given:
+
+• mf :: map (a -> b)
+• mx :: map a
+• f :: a -> b
+• x :: a
+
+  `fmap`  f    mx `<>` `fmap` (`$` x) mf `<>` (mf `<.>` mx)
+= `fmap` ($ x) mf `<>` `fmap`  f    mx `<>` (mf `<.>` mx)
+@
+
+    The intuition here is if that @map@ is a `Map`-like type then we can think
+    of those three expressions as having a set of keys associated with them,
+    such that:
+
+@
+Given:
+
+• keys :: map a -> `Set` key
+
+keys (mf `<.>` mx) = keys (`fmap` f mx) \`intersection\` keys (`fmap` (`$` x) mf)
+@
+
+    So normally the following equality would not be true:
+
+@
+  `fmap`  f    mx `<>` `fmap` (`$` x) mf
+= `fmap` ($ x) mf `<>` `fmap`  f    mx
+@
+
+    … because the result would change if there was a key collision.  Then the
+    order in which we union (`<>`) the two maps would change the result.
+
+    However, if you union yet another map (@mf `<.>` mx@) that shadows the
+    colliding keys then result remains the same.
 -}
 data Defaultable map value =
     Defaultable
@@ -225,7 +265,7 @@ instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map)
     Defaultable fMap fDefault <*> Defaultable xMap xDefault =
         Defaultable fxMap fxDefault
       where
-        fxMap = (fMap <.> xMap) <> fFallback <> xFallback
+        fxMap = fFallback <> xFallback <> (fMap <.> xMap)
           where
             fFallback =
                 case fDefault of
