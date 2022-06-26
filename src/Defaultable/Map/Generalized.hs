@@ -57,7 +57,7 @@ insert
     -> Defaultable map value
     -- ^
     -> Defaultable map value
-insert item defaultable = defaultable <|> singleton item
+insert item defaultable = singleton item <|> defaultable
 
 -- | Generalized version of `Defaultable.Map.withDefault`
 withDefault
