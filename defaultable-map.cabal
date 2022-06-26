@@ -6,21 +6,15 @@ description:        This package provides a @Defaultable@ type constructor that
                     wraps any @Map@-like type to add an optional default value. 
                     Wrapping a @Map@-like type in this way permits a valid
                     @Applicative@ instance, so you can think of this as an
-                    "@Applicative@ map" package.  This package also provides a
-                    concrete wrapper around the @Map@ type from the @containers@
-                    package.
+                    "@Applicative@ map" package.
                     .
-                    Strictly speaking, this package is not limited to just
-                    @Map@-like types.  The @Defaultable@ type can wrap any data
-                    structure that implements @Apply@ and @Monoid@.
+                    This package provides both a concrete and a generalized API:
                     .
-                    This package is similar to the @total-map@ package, but the
-                    difference is that the @Defaultable@ type provided by this
-                    package does not require a default value to be present,
-                    which means that the @Defaultable@ type also has a valid
-                    @Alternative@ instance, unlike the @TotalMap@ type.
-
-bug-reports:        https://github.com/Gabriella439/applicative-map/issues
+                    * The concrete API wraps @Data.Map@ for better performance
+                      and type inference
+                    .
+                    * The generalized API works with any @Map@-like type
+bug-reports:        https://github.com/Gabriella439/defaultable-map/issues
 license:            BSD-3-Clause
 license-file:       LICENSE
 author:             Gabriella Gonzalez
@@ -29,7 +23,7 @@ maintainer:         GenuineGabby@gmail.com
 
 source-repository head
     type:             git
-    location:         https://github.com/Gabriella439/applicative-map
+    location:         https://github.com/Gabriella439/defaultable-map
 
 library
     exposed-modules:  Defaultable.Map
