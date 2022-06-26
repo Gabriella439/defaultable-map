@@ -1,3 +1,9 @@
+1.0.2
+
+* BUG: Fix `Applicative` instance for `Defaultable`
+  * The original instance violated the composition/associativity law for
+    `Applicative`s
+
 1.0.1
 
 * BUG FIX: `Defaultable.Map.Generalized.insert` now correctly overrides any
