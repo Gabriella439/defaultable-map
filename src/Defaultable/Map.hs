@@ -263,7 +263,7 @@ instance (Apply map, forall a . Monoid (map a)) => Apply (Defaultable map) where
     (<.>) = (<*>)
 
 instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map) where
-    pure v = Defaultable mempty (Just v)
+    pure v = Defaultable mempty (pure v)
 
     Defaultable fMap fDefault <*> Defaultable xMap xDefault =
         Defaultable fxMap fxDefault
