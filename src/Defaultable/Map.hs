@@ -224,7 +224,7 @@ Given:
 
 • keys :: map a -> `Data.Set.Set` key
 
-keys (mf `<.>` mx) = keys (`fmap` f mx) \`intersection\` keys (`fmap` (`$` x) mf)
+keys (mf `<.>` mx) = keys (`fmap` kf mf) \`intersection\` keys (`fmap` kx mx)
 @
 
     So normally the following equality would not be true:
