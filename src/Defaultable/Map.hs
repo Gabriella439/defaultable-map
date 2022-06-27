@@ -259,8 +259,15 @@ data Defaultable map value =
         )
     deriving anyclass (NFData)
 
-instance (Apply map, forall a . Monoid (map a)) => Apply (Defaultable map) where
-    (<.>) = (<*>)
+instance (Apply map, forall a . Semigroup (map a)) => Apply (Defaultable map) where
+    Defaultable fMap Nothing <.> Defaultable xMap Nothing =
+        Defaultable (fMap <.> xMap) Nothing
+    Defaultable fMap (Just f) <.> Defaultable xMap Nothing =
+        Defaultable ((fMap <.> xMap) <> fmap f xMap) Nothing
+    Defaultable fMap Nothing <.> Defaultable xMap (Just x) =
+        Defaultable ((fMap <.> xMap) <> fmap ($ x) fMap) Nothing
+    Defaultable fMap (Just f) <.> Defaultable xMap (Just x) =
+        Defaultable ((fMap <.> xMap) <> fmap f xMap <> fmap ($ x) fMap) (Just (f x))
 
 instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map) where
     pure v = Defaultable mempty (pure v)
@@ -282,8 +289,9 @@ instance (Apply map, forall a . Monoid (map a)) => Applicative (Defaultable map)
 
         fxDefault = fDefault <*> xDefault
 
-instance (Apply map, forall a . Monoid (map a)) => Alt (Defaultable map) where
-    (<!>) = (<|>)
+instance (Apply map, forall a . Semigroup (map a)) => Alt (Defaultable map) where
+    Defaultable lMap lDefault <!> Defaultable rMap rDefault =
+        Defaultable (lMap <> rMap) (lDefault <|> rDefault)
 
 instance (Apply map, forall a . Monoid (map a)) => Alternative (Defaultable map) where
     empty = Defaultable mempty empty
