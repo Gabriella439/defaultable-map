@@ -99,7 +99,7 @@
 -- @
 --
 -- >>> complexJoin
--- Defaultable (fromList [(0,(Just "Gabriella","Gonzalez",Just "GabrielG439")),(2,(Just "Edgar","Codd",Nothing)),(3,(Nothing,"Bryant",Just "avibryant"))]) Nothing
+-- Defaultable (fromList [(0,(Just "Gabriella","Gonzalez",Just "GabriellaG439")),(2,(Just "Edgar","Codd",Nothing)),(3,(Nothing,"Bryant",Just "avibryant"))]) Nothing
 
 module Defaultable.Map
     ( -- * Comparison
