@@ -85,8 +85,8 @@
 -- Defaultable (fromList [(0,(Just "Gabriella","Gonzalez")),(2,(Just "Edgar","Codd")),(3,(Nothing,"Bryant"))]) Nothing
 -- >>> similarToOuterJoin
 -- Defaultable (fromList [(0,(Just "Gabriella",Just "Gonzalez")),(1,(Just "Oscar",Nothing)),(2,(Just "Edgar",Just "Codd")),(3,(Nothing,Just "Bryant"))]) (Just (Nothing,Nothing))
--- 
--- You can also do more interesting multiway joins where any combiination of
+--
+-- You can also do more interesting multiway joins where any combination of
 -- the inputs may be `Control.Applicative.optional`:
 -- 
 -- @
